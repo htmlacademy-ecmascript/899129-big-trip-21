@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createdestinationPicturesTemplate(pictures) {
   return pictures.map((picture) => `<img class="event__photo" src=${picture.src} alt=${picture.description}></img>`);
@@ -20,25 +20,16 @@ function createEventDesinationTemplate(destination) {
 </section>`);
 }
 
-export default class EventDestinationView {
-  constructor({ destination }) {
-    this.destination = destination;
+export default class EventDestinationView extends AbstractView {
+  #destination;
+
+  constructor({destination}) {
+    super();
+    this.#destination = destination;
   }
 
-
-  getTemplate() {
-    return createEventDesinationTemplate(this.destination);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createEventDesinationTemplate(this.#destination);
   }
 }
 

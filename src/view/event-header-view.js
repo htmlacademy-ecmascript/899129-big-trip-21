@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 import { POINT_TYPES } from '../const';
 import { convertToTitleCase, formatDate } from '../utils';
 import { DATE_TIME_FORMAT } from '../const';
@@ -10,11 +10,11 @@ function createEventTypeDropdownTemplate() {
     </div>`).join('');
 }
 
-function createEventDestinationListTemplate(destinationList) {
-  return destinationList.map((destination) => `<option value="${destination.name}"></option>`).join('');
-}
+const createEventDestinationListTemplate = (destinationList) =>
+  destinationList.map((destination) =>
+    `<option value="${destination.name}"></option>`).join('');
 
-function createEventHeaderTemplate(point, destination, destinationList) {
+function createEventHeaderTemplate(point, destinationList, destination) {
   const { basePrice, dateFrom, dateTo, type } = point;
 
   const pointType = type ? type : POINT_TYPES[0];
@@ -75,25 +75,31 @@ function createEventHeaderTemplate(point, destination, destinationList) {
 </header>`);
 }
 
-export default class EventHeaderView {
-  constructor({ point, destination, destinationList }) {
-    this.point = point;
-    this.destination = destination;
-    this.destinationList = destinationList;
+export default class EventHeaderView extends AbstractView {
+  #point = null;
+  #destinationList = null;
+  #destination = null;
+  #handleRollupButtonClick = null;
+
+  constructor({ tripPoint, destinationList, destination, onRollupButtonClick }) {
+    super();
+    this.#point = tripPoint;
+    this.#destinationList = destinationList;
+    this.#destination = destination;
+    this.#handleRollupButtonClick = onRollupButtonClick;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupButtonClickHandler);
   }
 
-  getTemplate() {
-    return createEventHeaderTemplate(this.point, this.destination, this.destinationList);
+  get template() {
+    return createEventHeaderTemplate(
+      this.#point,
+      this.#destinationList,
+      this.#destination
+    );
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #rollupButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRollupButtonClick();
+  };
 }
