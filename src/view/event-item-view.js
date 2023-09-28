@@ -4,7 +4,7 @@ import { DATE_TIME_FORMAT } from '../const';
 
 function createOffersListTemplate(chosenOffers, offers) {
   return chosenOffers.map((id) => {
-    const offer = offers.filter((item) => id === item.id)[0];
+    const offer = offers.filter((item) => item.id === id);
     return `<li class="event__offer">
     <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;

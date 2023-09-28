@@ -20,4 +20,19 @@ const DATE_TIME_FORMAT = {
   formDateTime: 'DD/MM/YY HH:mm'
 };
 
-export { RENDER_EVENT_COUNT, POINT_TYPES, DATE_TIME_FORMAT };
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past'
+};
+
+const FilterText = {
+  EVERYTHING: 'Click New Event to create your first point',
+  FUTURE: 'There are no future events now',
+  PRESENT: 'There are no present events now',
+  PAST: 'There are no past events now'
+};
+
+
+export { RENDER_EVENT_COUNT, POINT_TYPES, DATE_TIME_FORMAT, FilterType, FilterText };
