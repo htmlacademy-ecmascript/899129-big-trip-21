@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createTypeOffersTemplate(pointOffers, offerList) {
   return offerList.map((offer, index) => {
@@ -24,25 +24,18 @@ function createEventOffersTemplate(pointOffers, typeOffers) {
 </section>`);
 }
 
-export default class EventOffersView {
-  constructor({ pointOffers, typeOffers }) {
-    this.pointOffers = pointOffers;
-    this.typeOffers = typeOffers;
+export default class EventOffersView extends AbstractView {
+  #pointOffers;
+  #offers;
+
+  constructor({pointOffers, offers}) {
+    super();
+    this.#pointOffers = pointOffers;
+    this.#offers = offers;
   }
 
-  getTemplate() {
-    return createEventOffersTemplate(this.pointOffers, this.typeOffers);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createEventOffersTemplate(this.#pointOffers, this.#offers);
   }
 }
 

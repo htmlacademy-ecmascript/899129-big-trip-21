@@ -1,23 +1,25 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 
-function createEditingTemplate() {
-  return (`<form class="event event--edit" action="#" method="post">
-  </form>`);
-}
+const createEditingTemplate = () =>
+  `<li class="trip-events__item">
+    <form class="event event--edit" action="#" method="post">
+    </form>
+  </li>`;
+export default class EventEditingView extends AbstractView {
+  #handleFormSubmit = null;
 
-export default class EventEditingView {
-  getTemplate() {
+  constructor({onFormSubmit}) {
+    super();
+    this.#handleFormSubmit = onFormSubmit;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  get template() {
     return createEditingTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }

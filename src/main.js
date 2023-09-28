@@ -10,10 +10,10 @@ const destinationModel = new DestinationModel();
 const offerModel = new OfferModel();
 
 const mainPresenter = new MainPresenter({
-  mainContainer: siteMainElement,
+  parentContainer: siteMainElement,
   pointsModel: pointModel,
-  destinationsModel: destinationModel,
-  offersModel: offerModel
+  offersModel: offerModel,
+  destinationsModel: destinationModel
 });
 
 mainPresenter.init();
