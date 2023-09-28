@@ -44,8 +44,6 @@ const mockPoints = [
   }
 ];
 
-function getRandomPoint() {
-  return getRandomArrayElement(mockPoints);
-}
+const getRandomPoint = () => getRandomArrayElement(mockPoints);
 
 export {getRandomPoint};

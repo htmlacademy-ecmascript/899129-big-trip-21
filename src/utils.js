@@ -1,7 +1,11 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 
 dayjs.extend(duration);
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 const MSEC_IN_SEC = 1000;
 const SEC_IN_MIN = 60;
@@ -41,8 +45,39 @@ function getPointDuration(dateFrom, dateTo) {
   return pointDuration;
 }
 
+const isTripPointInFuture = (dateFrom) =>
+  dateFrom && dayjs(dateFrom).isAfter(dayjs());
+
+const isTripPointInPresent = (dateFrom, dateTo) =>
+  dateFrom &&
+  dateTo &&
+  dayjs(dateFrom).isSameOrBefore(dayjs()) &&
+  dayjs(dateTo).isSameOrAfter(dayjs());
+
+const isTripPointInPast = (dateTo) =>
+  dateTo && dayjs(dateTo).isBefore(dayjs());
+
+const comparePointsByDate = (firstPoint, secondPoint) => {
+  const firstDate = dayjs(firstPoint.date_from);
+  const secondDate = dayjs(secondPoint.date_from);
+  const result = firstDate.isBefore(secondDate);
+
+  return result ? -result : firstDate.isAfter(secondDate);
+};
+
+
 function convertToTitleCase(word) {
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
 
-export { getRandomNumber, getRandomArrayElement, formatDate, getPointDuration, convertToTitleCase };
+export {
+  getRandomNumber,
+  getRandomArrayElement,
+  formatDate,
+  getPointDuration,
+  convertToTitleCase,
+  isTripPointInFuture,
+  isTripPointInPresent,
+  isTripPointInPast,
+  comparePointsByDate
+};
