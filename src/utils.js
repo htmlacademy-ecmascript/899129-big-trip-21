@@ -70,6 +70,10 @@ function convertToTitleCase(word) {
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
 
+const updateItem = (items, update) =>
+  items.map((item) => item.id === update.id ? update : item);
+
+
 export {
   getRandomNumber,
   getRandomArrayElement,
@@ -79,5 +83,6 @@ export {
   isTripPointInFuture,
   isTripPointInPresent,
   isTripPointInPast,
-  comparePointsByDate
+  comparePointsByDate,
+  updateItem
 };
