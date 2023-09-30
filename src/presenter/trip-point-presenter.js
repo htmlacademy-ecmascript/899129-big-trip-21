@@ -1,9 +1,5 @@
 import EventItemView from '../view/event-item-view';
 import EventEditingView from '../view/event-editing-view';
-import EventHeaderView from '../view/event-header-view';
-import EventDetailsView from '../view/event-details-view';
-import EventDestinationView from '../view/event-destination-view';
-import EventOffersView from '../view/event-offers-view';
 import { PointMode } from '../const';
 import {render, replace, remove} from '../framework/render.js';
 
@@ -25,14 +21,14 @@ export default class TripPointPresenter {
     parentContainer,
     offersModel,
     destinationsModel,
-    onDataChange,
-    onModeChange
+    handleDataChange,
+    handleModeChange
   }) {
     this.#parentContainer = parentContainer;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
-    this.#handleDataChange = onDataChange;
-    this.#handleModeChange = onModeChange;
+    this.#handleDataChange = handleDataChange;
+    this.#handleModeChange = handleModeChange;
   }
 
   #replaceTripPointToForm = () => {
@@ -64,10 +60,16 @@ export default class TripPointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({ ...this.#tripPoint, 'is_favorite': !this.#tripPoint.is_favorite });
+    this.#handleDataChange(
+      {
+        ...this.#tripPoint,
+        'is_favorite': !this.#tripPoint['is_favorite']
+      }
+    );
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (tripPoint) => {
+    this.#handleDataChange(tripPoint);
     this.#replaceFormToTripPoint();
   };
 
@@ -85,47 +87,30 @@ export default class TripPointPresenter {
   init(tripPoint) {
     this.#tripPoint = tripPoint;
 
-    const offers = this.#offersModel.getByType(this.#tripPoint.type);
+    const typeOffers = this.#offersModel.getByType(this.#tripPoint.type);
     const destination = this.#destinationsModel.getById(this.#tripPoint.destination);
-    const destinations = this.#destinationsModel.destinations;
+    const destinations = [...this.#destinationsModel.destinations];
+    const offers = [...this.#offersModel.offers];
 
     const prevPointComponent = this.#tripPointComponent;
     const prevFormComponent = this.#formComponent;
 
     this.#tripPointComponent = new EventItemView({
       tripPoint: this.#tripPoint,
-      offers: offers,
+      offers: typeOffers,
       destination: destination,
-      onRollupButtonClick: this.#handleRollupButtonDownClick,
-      onFavoriteClick: this.#handleFavoriteClick,
+      handleRollupButtonDownClick: this.#handleRollupButtonDownClick,
+      handleFavoriteClick: this.#handleFavoriteClick,
     });
 
     this.#formComponent = new EventEditingView({
-      onFormSubmit: this.#handleFormSubmit
-    });
-
-    const formElement = this.#formComponent.element.querySelector('.event');
-    const formDetailsComponent = new EventDetailsView();
-
-    render(new EventHeaderView({
       tripPoint: this.#tripPoint,
       destinationList: destinations,
-      destination: destination,
-      onRollupButtonClick: this.#handleRollupButtonUpClick
-    }), formElement);
+      offersList: offers,
+      handleFormSubmit: this.#handleFormSubmit,
+      handleRollupButtonUpClick: this.#handleRollupButtonUpClick
+    });
 
-    render(formDetailsComponent, formElement);
-    if (destination) {
-      render(new EventDestinationView({ destination: destination }),
-        formDetailsComponent.element);
-    }
-
-    if (offers.length) {
-      render(new EventOffersView({
-        pointOffers: tripPoint.offers,
-        offers: offers
-      }), formDetailsComponent.element);
-    }
 
     if (prevPointComponent === null || prevFormComponent === null) {
       render(this.#tripPointComponent, this.#parentContainer);
