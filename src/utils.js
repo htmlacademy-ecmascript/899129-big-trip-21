@@ -73,6 +73,20 @@ function convertToTitleCase(word) {
 const updateItem = (items, update) =>
   items.map((item) => item.id === update.id ? update : item);
 
+const comparePointsByPrice = (firstPoint, secondPoint) => {
+  const firstPrice = firstPoint.base_price;
+  const secondPrice = secondPoint.base_price;
+
+  return secondPrice - firstPrice;
+};
+
+const comparePointsByTime = (firstPoint, secondPoint) => {
+  const firstDuration = dayjs(firstPoint.date_to).diff(dayjs(firstPoint.date_from));
+  const secondDuration = dayjs(secondPoint.date_to).diff(dayjs(secondPoint.date_from));
+
+  return secondDuration - firstDuration;
+};
+
 
 export {
   getRandomNumber,
@@ -84,5 +98,7 @@ export {
   isTripPointInPresent,
   isTripPointInPast,
   comparePointsByDate,
-  updateItem
+  updateItem,
+  comparePointsByPrice,
+  comparePointsByTime
 };
