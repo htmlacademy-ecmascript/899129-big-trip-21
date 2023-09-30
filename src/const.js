@@ -34,5 +34,9 @@ const FilterText = {
   PAST: 'There are no past events now'
 };
 
+const PointMode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
 
-export { RENDER_EVENT_COUNT, POINT_TYPES, DATE_TIME_FORMAT, FilterType, FilterText };
+export { RENDER_EVENT_COUNT, POINT_TYPES, DATE_TIME_FORMAT, FilterType, FilterText, PointMode };

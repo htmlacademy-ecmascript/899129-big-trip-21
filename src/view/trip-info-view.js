@@ -8,7 +8,7 @@ const createTripInfoMainTemplate = (points, destinations) => {
   const startDate = formatDate(points[0].date_from, DATE_TIME_FORMAT.shortDate);
   const endDate = formatDate(points[points.length - 1].date_to, DATE_TIME_FORMAT.shortDate);
 
-  let destinationNames = points.map((point) => destinations.find((el) => point.id === el.id).name);
+  let destinationNames = points.map((point) => destinations.find((el) => point.destination === el.id).name);
   destinationNames = destinationNames.filter((el, i, array) => array[i] !== array[i + 1]);
 
   let title;
