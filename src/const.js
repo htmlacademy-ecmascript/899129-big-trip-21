@@ -39,4 +39,12 @@ const PointMode = {
   EDITING: 'EDITING',
 };
 
-export { RENDER_EVENT_COUNT, POINT_TYPES, DATE_TIME_FORMAT, FilterType, FilterText, PointMode };
+const SortType = {
+  DAY: 'DAY',
+  PRICE: 'PRICE',
+  TIME: 'TIME',
+  EVENT: 'EVENT',
+  OFFERS: 'OFFERS'
+};
+
+export { RENDER_EVENT_COUNT, POINT_TYPES, DATE_TIME_FORMAT, FilterType, FilterText, PointMode, SortType };
