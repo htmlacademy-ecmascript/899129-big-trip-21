@@ -17,7 +17,8 @@ const DATE_TIME_FORMAT = {
   date: 'YYYY-MM-DD',
   time: 'HH:mm',
   shortDate: 'MMM DD',
-  formDateTime: 'DD/MM/YY HH:mm'
+  formDateTime: 'DD/MM/YY HH:mm',
+  PICKER_DATETIME: 'd/m/y H:i'
 };
 
 const FilterType = {

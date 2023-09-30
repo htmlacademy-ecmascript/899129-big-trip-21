@@ -1,6 +1,8 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { DATE_TIME_FORMAT, POINT_TYPES } from '../const.js';
 import { convertToTitleCase, formatDate } from '../utils.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createEventTypeDropdownTemplate = () =>
   POINT_TYPES.map((type) =>
@@ -144,6 +146,8 @@ export default class EditFormView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleRollupButtonClick = null;
 
+  #datepickers = null;
+
   constructor({
     tripPoint,
     destinationList,
@@ -171,6 +175,12 @@ export default class EditFormView extends AbstractStatefulView {
     );
   }
 
+  removeElement = () => {
+    super.removeElement();
+
+    this.#datepickers.forEach((datepicker) => datepicker.destroy());
+  };
+
   _restoreHandlers = () => {
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
@@ -184,6 +194,43 @@ export default class EditFormView extends AbstractStatefulView {
       .addEventListener('change', this.#priceChangeHandler);
     this.element.querySelectorAll('.event__offer-checkbox')
       .forEach((offer) => offer.addEventListener('change', this.#offerChangeHandler));
+
+    this.#setDatepickers();
+  };
+
+  #setDatepickers = () => {
+    const dateElements = this.element.querySelectorAll('.event__input--time');
+
+    this.#datepickers = [...dateElements].map((element, id) => {
+      const minDate = id ? dateElements[0].value : null;
+      const maxDate = id ? null : dateElements[1].value;
+
+      return flatpickr(
+        element,
+        {
+          allowInput: true,
+          defaultDate: element.value,
+          dateFormat: DATE_TIME_FORMAT.PICKER_DATETIME,
+          enableTime: true,
+          minDate,
+          maxDate,
+          'time_24hr': true,
+          locale: {
+            firstDayOfWeek: 1,
+          },
+          onChange: this.#dateChangeHandler
+        });
+    });
+  };
+
+  #dateChangeHandler = ([userDate], dateStr, datepicker) => {
+    const fieldName = datepicker.element.name === 'event-start-time'
+      ? 'date_from'
+      : 'date_to';
+
+    this._setState({
+      [fieldName]: formatDate(userDate)
+    });
   };
 
   #formSubmitHandler = (evt) => {
