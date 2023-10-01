@@ -29,23 +29,62 @@ const FilterType = {
 };
 
 const FilterText = {
-  EVERYTHING: 'Click New Event to create your first point',
-  FUTURE: 'There are no future events now',
-  PRESENT: 'There are no present events now',
-  PAST: 'There are no past events now'
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.FUTURE]: 'There are no future events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.PAST]: 'There are no past events now'
+};
+
+const FormType = {
+  CREATING: 'CREATING',
+  EDITING: 'EDITING'
 };
 
 const PointMode = {
   DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
+  EDITING: 'EDITING'
 };
 
 const SortType = {
-  DAY: 'DAY',
-  PRICE: 'PRICE',
-  TIME: 'TIME',
-  EVENT: 'EVENT',
-  OFFERS: 'OFFERS'
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers'
 };
 
-export { RENDER_EVENT_COUNT, POINT_TYPES, DATE_TIME_FORMAT, FilterType, FilterText, PointMode, SortType };
+const Action = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const EMPTY_POINT = {
+  'base_price': 0,
+  'date_from': null,
+  'date_to': null,
+  'destination': null,
+  'is_favorite': false,
+  'offers': [],
+  'type': POINT_TYPES[0],
+};
+
+
+export {
+  RENDER_EVENT_COUNT,
+  POINT_TYPES, DATE_TIME_FORMAT,
+  FilterType,
+  FilterText,
+  PointMode,
+  SortType,
+  Action,
+  UpdateType,
+  FormType,
+  EMPTY_POINT
+};
