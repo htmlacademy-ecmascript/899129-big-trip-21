@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import { FilterType } from './const';
 
 dayjs.extend(duration);
 dayjs.extend(isSameOrBefore);
@@ -70,9 +71,6 @@ function convertToTitleCase(word) {
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
 
-const updateItem = (items, update) =>
-  items.map((item) => item.id === update.id ? update : item);
-
 const comparePointsByPrice = (firstPoint, secondPoint) => {
   const firstPrice = firstPoint.base_price;
   const secondPrice = secondPoint.base_price;
@@ -87,6 +85,18 @@ const comparePointsByTime = (firstPoint, secondPoint) => {
   return secondDuration - firstDuration;
 };
 
+const getFilters = () => ({
+  [FilterType.EVERYTHING]: (points) => points,
+  [FilterType.FUTURE]: (points) => points.filter((point) => isTripPointInFuture(point.date_from)),
+  [FilterType.PRESENT]: (points) => points.filter((point) => isTripPointInPresent(point.date_from, point.date_to)),
+  [FilterType.PAST]: (points) => points.filter((point) => isTripPointInPast(point.date_to))
+});
+
+const isDateEqual = (firstDate, secondDate) =>
+  dayjs(firstDate).isSame(secondDate, 'm');
+
+const isPriceEqual = (firstPrice, secondPrice) =>
+  firstPrice === secondPrice;
 
 export {
   getRandomNumber,
@@ -98,7 +108,9 @@ export {
   isTripPointInPresent,
   isTripPointInPast,
   comparePointsByDate,
-  updateItem,
   comparePointsByPrice,
-  comparePointsByTime
+  comparePointsByTime,
+  getFilters,
+  isDateEqual,
+  isPriceEqual
 };

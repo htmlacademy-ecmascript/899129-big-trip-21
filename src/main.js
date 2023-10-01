@@ -1,16 +1,19 @@
-import MainPresenter from './presenter/main-presenter.js';
+import PagePresenter from './presenter/page-presenter.js';
 import PointModel from './model/point-model.js';
-import DestinationModel from './model/destination-model.js';
 import OfferModel from './model/offer-model.js';
+import DestinationModel from './model/destination-model.js';
+import FilterModel from './model/filter-model.js';
 
-const pointModel = new PointModel();
-const destinationModel = new DestinationModel();
-const offerModel = new OfferModel();
+const pointsModel = new PointModel();
+const offersModel = new OfferModel();
+const destinationsModel = new DestinationModel();
+const filterModel = new FilterModel();
 
-const mainPresenter = new MainPresenter({
-  pointsModel: pointModel,
-  offersModel: offerModel,
-  destinationsModel: destinationModel
+const pagePresenter = new PagePresenter({
+  pointsModel: pointsModel,
+  offersModel,
+  destinationsModel,
+  filterModel
 });
 
-mainPresenter.init();
+pagePresenter.init();
