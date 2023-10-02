@@ -11,7 +11,7 @@ export default class PagePresenter {
   #headerPresenter = null;
   #mainPresenter = null;
 
-  #newPointButtonComponent = null;
+  #newEventButtonComponent = null;
 
   init = (pointsModel, offersModel, destinationsModel, filterModel) => {
     this.#pointsModel = pointsModel;
@@ -19,8 +19,8 @@ export default class PagePresenter {
     this.#destinationsModel = destinationsModel;
     this.#filterModel = filterModel;
 
-    this.#newPointButtonComponent = new NewEventButtonView({
-      handleClick: this.#handleNewPointButtonClick
+    this.#newEventButtonComponent = new NewEventButtonView({
+      handleClick: this.#handleNewEventButtonClick
     });
 
     this.#headerPresenter = new HeaderPresenter({
@@ -28,7 +28,7 @@ export default class PagePresenter {
       offersModel: this.#offersModel,
       destinationsModel: this.#destinationsModel,
       filterModel: this.#filterModel,
-      buttonComponent: this.#newPointButtonComponent
+      buttonComponent: this.#newEventButtonComponent
     });
 
     this.#mainPresenter = new MainPresenter({
@@ -36,7 +36,8 @@ export default class PagePresenter {
       offersModel: this.#offersModel,
       destinationsModel: this.#destinationsModel,
       filterModel: this.#filterModel,
-      handleNewPointDestroy: this.#handleNewPointFormClose
+      handleNewPointDestroy: this.#handleNewPointFormClose,
+      handleServerError: this.#blockNewEventButton
     });
 
     this.#headerPresenter.init();
@@ -45,11 +46,15 @@ export default class PagePresenter {
 
 
   #handleNewPointFormClose = () => {
-    this.#newPointButtonComponent.element.disabled = false;
+    this.#newEventButtonComponent.element.disabled = false;
   };
 
-  #handleNewPointButtonClick = () => {
+  #blockNewEventButton = () => {
+    this.#newEventButtonComponent.element.disabled = true;
+  };
+
+  #handleNewEventButtonClick = () => {
     this.#mainPresenter.createPoint();
-    this.#newPointButtonComponent.element.disabled = true;
+    this.#blockNewEventButton();
   };
 }

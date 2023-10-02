@@ -57,9 +57,9 @@ const createTripInfoTemplate = (points, destinations, offers) =>
   </section>`;
 
 export default class TripInfoView extends AbstractView {
-  #points;
-  #destinations;
-  #offers;
+  #points = null;
+  #destinations = null;
+  #offers = null;
 
   constructor({ tripPoints, destinations, offers }) {
     super();

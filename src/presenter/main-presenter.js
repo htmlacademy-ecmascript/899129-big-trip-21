@@ -1,16 +1,26 @@
 import {render, remove} from '../framework/render.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import SortView from './../view/sort-view.js';
 import EventListView from '../view/event-list-view.js';
 import NoTripPointView from './../view/no-trip-point-view.js';
+import ServerErrorView from '../view/server-error-view.js';
+import LoadingView from './../view/loading-view.js';
 import TripPointPresenter from './trip-point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 import {comparePointsByPrice, comparePointsByTime, comparePointsByDate, getFilters} from '../utils.js';
-import {SortType, FilterType, UpdateType, Action} from '../const.js';
+import {SortType, FilterType, UpdateType, Action, TimeLimit} from '../const.js';
 
 export default class MainPresenter {
   #tripEventsElement = document.querySelector('.trip-events');
 
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
+
   #contentComponent = new EventListView();
+  #loadingComponent = new LoadingView();
+  #serverErrorComponent = new ServerErrorView();
   #sortComponent = null;
   #noTripPointComponent = null;
 
@@ -21,20 +31,24 @@ export default class MainPresenter {
 
   #pointPresenters = new Map();
   #currentSortType = SortType.DAY;
+  #isLoading = true;
 
   #newPointPresenter = null;
+  #handleServerError = null;
 
   constructor({
     pointsModel,
     offersModel,
     destinationsModel,
     filterModel,
-    handleNewPointDestroy
+    handleNewPointDestroy,
+    handleServerError
   }) {
     this.#pointsModel = pointsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#filterModel = filterModel;
+    this.#handleServerError = handleServerError;
 
     this.#newPointPresenter = new NewPointPresenter({
       parentContainer: this.#contentComponent.element,
@@ -87,6 +101,11 @@ export default class MainPresenter {
   };
 
   #renderContent = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if (!this.points.length) {
       this.#renderNoTripPointComponent();
       return;
@@ -120,6 +139,14 @@ export default class MainPresenter {
     render(this.#noTripPointComponent, this.#tripEventsElement);
   };
 
+  #renderServerErrorComponent = () => {
+    render(this.#serverErrorComponent, this.#tripEventsElement);
+  };
+
+  #renderLoading = () => {
+    render(this.#loadingComponent, this.#tripEventsElement);
+  };
+
   #renderTripEventsListComponent = () => {
     render(this.#contentComponent, this.#tripEventsElement);
   };
@@ -146,18 +173,37 @@ export default class MainPresenter {
     render(this.#sortComponent, this.#tripEventsElement);
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case Action.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
       case Action.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#newPointPresenter.setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch(err) {
+          this.#newPointPresenter.setAborting();
+        }
         break;
       case Action.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setDeleting();
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -172,6 +218,17 @@ export default class MainPresenter {
       case UpdateType.MAJOR:
         this.#clearContent({resetSortType: true});
         this.#renderContent();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderContent();
+        break;
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderServerErrorComponent();
+        this.#handleServerError();
         break;
     }
   };
