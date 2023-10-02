@@ -1,5 +1,3 @@
-const RENDER_EVENT_COUNT = 3;
-
 const POINT_TYPES = [
   'taxi',
   'bus',
@@ -63,7 +61,8 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
-  INIT: 'INIT'
+  INIT: 'INIT',
+  ERROR: 'ERROR'
 };
 
 const EMPTY_POINT = {
@@ -73,7 +72,7 @@ const EMPTY_POINT = {
   'destination': null,
   'isFavorite': false,
   'offers': [],
-  'type': POINT_TYPES[0],
+  'type': POINT_TYPES[0]
 };
 
 const Path = {
@@ -82,8 +81,19 @@ const Path = {
   DESTINATIONS: 'destinations'
 };
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000
+};
+
+const HTTPMethod = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE'
+};
+
 export {
-  RENDER_EVENT_COUNT,
   POINT_TYPES, DATE_TIME_FORMAT,
   FilterType,
   FilterText,
@@ -93,5 +103,7 @@ export {
   UpdateType,
   FormType,
   EMPTY_POINT,
-  Path
+  Path,
+  TimeLimit,
+  HTTPMethod
 };

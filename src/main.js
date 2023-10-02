@@ -19,7 +19,6 @@ const offersModel = new OfferModel({
 const destinationsModel = new DestinationModel({
   apiService: new DestinationsApiService(END_POINT, AUTHORIZATION)
 });
-
 const filterModel = new FilterModel();
 
 const pagePresenter = new PagePresenter();
@@ -31,4 +30,5 @@ const loadData = async () => {
 };
 
 loadData();
+
 pagePresenter.init(pointsModel, offersModel, destinationsModel, filterModel);

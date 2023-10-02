@@ -2,43 +2,51 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { DATE_TIME_FORMAT, POINT_TYPES, FormType, EMPTY_POINT } from '../const.js';
 import { convertToTitleCase, formatDate } from '../utils.js';
 import flatpickr from 'flatpickr';
+import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
-const createEventTypeDropdownTemplate = () =>
-  POINT_TYPES.map((type) =>
+const createEventTypeDropdownTemplate = (point) => {
+  const { isDisabled } = point;
+  return POINT_TYPES.map((type) =>
     `<div class="event__type-item">
-      <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+      <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${isDisabled ? 'disabled' : ''}>
       <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${convertToTitleCase(type)}</label>
     </div>`
   ).join('');
+};
 
 const createDestinationOptionsTemplate = (destinations) =>
   destinations.map((destination) =>
-    `<option value="${destination.name}"></option>`).join('');
+    `<option value="${he.encode(destination.name)}"></option>`).join('');
 
-const createRollupButtonTemplate = (type) =>
-  type === FormType.EDITING ?
-    '<button class="event__rollup-btn" type="button"/>' :
+const createRollupButtonTemplate = (type, point) => {
+  const { isDisabled } = point;
+  return type === FormType.EDITING ?
+    `<button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}/>` :
     '';
+};
 
-const createFormButtonsTemplate = (type) => {
+const createFormButtonsTemplate = (type, point) => {
+  const { isDisabled, isDeleting, isSaving } = point;
   const buttonText = type === FormType.CREATING ? 'Cancel' : 'Delete';
 
-  return `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-  <button class="event__reset-btn" type="reset">${buttonText}</button>
-  ${createRollupButtonTemplate(type)}`;
+  return `<button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+  <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>
+    ${isDeleting ? 'Deleting...' : `${buttonText}`}
+  </button >
+  ${createRollupButtonTemplate(type, point)}`;
 };
 
 const createFormHeaderTemplate = (point, destinationList, destination, formType) => {
-  const { basePrice, dateFrom, dateTo, type } = point;
+  const { basePrice, dateFrom, dateTo, type, isDisabled } = point;
 
   const startDatetime = dateFrom ? formatDate(dateFrom, DATE_TIME_FORMAT.FORM_DATETIME) : '';
   const endDatetime = dateTo ? formatDate(dateTo, DATE_TIME_FORMAT.FORM_DATETIME) : '';
 
   const typeName = type ? type : POINT_TYPES[0];
 
-  const destinationName = destination?.name ? destination.name : '';
+  const destinationName = destination?.name ? he.encode(destination.name) : '';
 
   return `<header class="event__header">
     <div class="event__type-wrapper">
@@ -46,12 +54,12 @@ const createFormHeaderTemplate = (point, destinationList, destination, formType)
         <span class="visually-hidden">Choose event type</span>
         <img class="event__type-icon" width="17" height="17" src="img/icons/${typeName}.png" alt="Event type icon">
       </label>
-      <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+      <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
       <div class="event__type-list">
         <fieldset class="event__type-group">
           <legend class="visually-hidden">Event type</legend>
-          ${createEventTypeDropdownTemplate()}
+          ${createEventTypeDropdownTemplate(point)}
         </fieldset>
       </div>
     </div>
@@ -60,7 +68,7 @@ const createFormHeaderTemplate = (point, destinationList, destination, formType)
       <label class="event__label  event__type-output" for="event-destination-1">
         ${typeName}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
       <datalist id="destination-list-1">
         ${createDestinationOptionsTemplate(destinationList)}
       </datalist>
@@ -68,10 +76,10 @@ const createFormHeaderTemplate = (point, destinationList, destination, formType)
 
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time-1">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDatetime}">
+      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDatetime}" ${isDisabled ? 'disabled' : ''}>
       &mdash;
       <label class="visually-hidden" for="event-end-time-1">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDatetime}">
+      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDatetime}" ${isDisabled ? 'disabled' : ''}>
     </div>
 
     <div class="event__field-group  event__field-group--price">
@@ -79,19 +87,21 @@ const createFormHeaderTemplate = (point, destinationList, destination, formType)
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
     </div>
 
-    ${createFormButtonsTemplate(formType)}
+    ${createFormButtonsTemplate(formType, point)}
   </header>`;
 };
 
-const createOffersTemplate = (pointOffers, offersList) =>
-  offersList.map((offer) => {
+const createOffersTemplate = (pointOffers, offersList, point) => {
+  const { isDisabled } = point;
+
+  return offersList.map((offer) => {
     const offerChecked = pointOffers.filter((el) => el === offer.id).length;
     return (
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="${offer.id}" type="checkbox" name="event-offer-comfort" ${offerChecked ? 'checked' : ''}>
+        <input class="event__offer-checkbox  visually-hidden" id="${offer.id}" type="checkbox" name="event-offer-comfort" ${offerChecked ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
         <label class="event__offer-label" for="${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
@@ -99,13 +109,13 @@ const createOffersTemplate = (pointOffers, offersList) =>
         </label>
       </div>`);
   }).join('');
+};
 
-const createFormOffersTemplate = (pointOffers, offersList) =>
+const createFormOffersTemplate = (pointOffers, offersList, point) =>
   `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
     <div class="event__available-offers">
-      ${createOffersTemplate(pointOffers, offersList)}
+    ${createOffersTemplate(pointOffers, offersList, point)}
     </div>
   </section>`;
 
@@ -133,7 +143,7 @@ const createFormDetailsTemplate = (point, offersList, destination) => {
   const typeOffers = offersList.find((offers) => offers.type === point.type).offers;
 
   return `<section class="event__details">
-    ${typeOffers.length ? createFormOffersTemplate(point.offers, typeOffers) : ''}
+    ${typeOffers.length ? createFormOffersTemplate(point.offers, typeOffers, point) : ''}
     ${destination ? createFormDestinationTemplate(destination) : ''}
   </section>`;
 };
@@ -231,13 +241,13 @@ export default class EventEditingView extends AbstractStatefulView {
     this.#datepickers = [...dateElements].map((element, id) => {
       const minDate = id ? dateElements[0].value : null;
       const maxDate = id ? null : dateElements[1].value;
+      const defaultDate = id ? dateElements[1].value : dateElements[0].value;
 
       return flatpickr(
         element,
         {
-          allowInput: true,
-          defaultDate: element.value,
           dateFormat: DATE_TIME_FORMAT.PICKER_DATETIME,
+          defaultDate,
           enableTime: true,
           minDate,
           maxDate,
@@ -315,9 +325,24 @@ export default class EventEditingView extends AbstractStatefulView {
     this._setState({
       [fieldName]: formatDate(userDate)
     });
+
+    this.#setDatepickers();
   };
 
-  static parsePointToState = (point) => ({ ...point });
+  static parsePointToState = (point) => ({
+    ...point,
+    isDisabled: false,
+    isSaving: false,
+    isDeleting: false
+  });
 
-  static parseStateToPoint = (state) => ({ ...state });
+  static parseStateToPoint = (state) => {
+    const point = { ...state };
+
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
+    return point;
+  };
 }
