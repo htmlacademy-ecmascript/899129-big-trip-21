@@ -1,8 +1,8 @@
-import {render, replace, remove} from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 import EventItemView from '../view/event-item-view.js';
 import EventEditingView from '../view/event-editing-view.js';
-import {PointMode, Action, UpdateType} from '../const.js';
-import {isDateEqual, isPriceEqual} from '../utils.js';
+import { PointMode, Action, UpdateType } from '../const.js';
+import { isDateEqual, isPriceEqual } from '../utils.js';
 
 export default class TripPointPresenter {
   #parentContainer = null;
@@ -66,15 +66,15 @@ export default class TripPointPresenter {
       UpdateType.PATCH,
       {
         ...this.#tripPoint,
-        'is_favorite': !this.#tripPoint['is_favorite']
+        isFavorite: !this.#tripPoint.isFavorite
       }
     );
   };
 
   #handleFormSubmit = (tripPoint) => {
-    const isMinorUpdate = !isDateEqual(this.#tripPoint['date_from'], tripPoint['date_from']) ||
-      !isDateEqual(this.#tripPoint['date_to'], tripPoint['date_to']) ||
-      !isPriceEqual(this.#tripPoint['base_price'], tripPoint['base_price']);
+    const isMinorUpdate = !isDateEqual(this.#tripPoint.dateFrom, tripPoint.dateFrom) ||
+      !isDateEqual(this.#tripPoint.dateTo, tripPoint.dateTo) ||
+      !isPriceEqual(this.#tripPoint.basePrice, tripPoint.basePrice);
 
     this.#handleDataChange(
       Action.UPDATE_POINT,
@@ -128,7 +128,7 @@ export default class TripPointPresenter {
       offersList: offers,
       handleFormSubmit: this.#handleFormSubmit,
       handleDeleteClick: this.#handleDeleteClick,
-      handleCanselClick: this.#handleRollupButtonUpClick
+      handleCancelClick: this.#handleRollupButtonUpClick
     });
 
 

@@ -63,18 +63,24 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
 
 const EMPTY_POINT = {
-  'base_price': 0,
-  'date_from': null,
-  'date_to': null,
+  'basePrice': 0,
+  'dateFrom': null,
+  'dateTo': null,
   'destination': null,
-  'is_favorite': false,
+  'isFavorite': false,
   'offers': [],
   'type': POINT_TYPES[0],
 };
 
+const Path = {
+  POINTS: 'points',
+  OFFERS: 'offers',
+  DESTINATIONS: 'destinations'
+};
 
 export {
   RENDER_EVENT_COUNT,
@@ -86,5 +92,6 @@ export {
   Action,
   UpdateType,
   FormType,
-  EMPTY_POINT
+  EMPTY_POINT,
+  Path
 };

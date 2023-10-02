@@ -13,14 +13,12 @@ export default class PagePresenter {
 
   #newPointButtonComponent = null;
 
-  constructor({pointsModel, offersModel, destinationsModel, filterModel}) {
+  init = (pointsModel, offersModel, destinationsModel, filterModel) => {
     this.#pointsModel = pointsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#filterModel = filterModel;
-  }
 
-  init = () => {
     this.#newPointButtonComponent = new NewEventButtonView({
       handleClick: this.#handleNewPointButtonClick
     });
@@ -44,6 +42,7 @@ export default class PagePresenter {
     this.#headerPresenter.init();
     this.#mainPresenter.init();
   };
+
 
   #handleNewPointFormClose = () => {
     this.#newPointButtonComponent.element.disabled = false;

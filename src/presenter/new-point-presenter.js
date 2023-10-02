@@ -1,6 +1,6 @@
-import {remove, render, RenderPosition} from '../framework/render.js';
+import { remove, render, RenderPosition } from '../framework/render.js';
 import EventEditingView from '../view/event-editing-view.js';
-import {Action, UpdateType, FormType} from '../const.js';
+import { Action, UpdateType, FormType } from '../const.js';
 
 export default class NewPointPresenter {
   #parentContainer = null;
@@ -9,7 +9,7 @@ export default class NewPointPresenter {
 
   #formComponent = null;
 
-  constructor({parentContainer, handleDataChange, handleDestroy}) {
+  constructor({ parentContainer, handleDataChange, handleDestroy }) {
     this.#parentContainer = parentContainer;
     this.#handleDataChange = handleDataChange;
     this.#handleDestroy = handleDestroy;
@@ -25,7 +25,7 @@ export default class NewPointPresenter {
       offersList: offers,
       type: FormType.CREATING,
       handleFormSubmit: this.#handleFormSubmit,
-      handleCanselClick: this.#handleCanselClick
+      handleCancelClick: this.#handleCancelClick
     });
 
     render(this.#formComponent, this.#parentContainer, RenderPosition.AFTERBEGIN);
@@ -50,15 +50,12 @@ export default class NewPointPresenter {
     this.#handleDataChange(
       Action.ADD_POINT,
       UpdateType.MINOR,
-      {
-        id: crypto.randomUUID(),
-        ...point
-      },
+      point,
     );
     this.destroy();
   };
 
-  #handleCanselClick = () => {
+  #handleCancelClick = () => {
     this.destroy();
   };
 

@@ -1,11 +1,12 @@
-import { getOffers } from '../mock/offer';
 import Observable from '../framework/observable.js';
-export default class OfferModel extends Observable{
-  #offers;
+import { UpdateType } from '../const.js';
+export default class OfferModel extends Observable {
+  #apiService = null;
+  #offers = [];
 
-  constructor() {
+  constructor({ apiService }) {
     super();
-    this.#offers = getOffers();
+    this.#apiService = apiService;
   }
 
   get offers() {
@@ -15,4 +16,13 @@ export default class OfferModel extends Observable{
   getByType(type) {
     return this.#offers.find((offer) => offer.type === type).offers;
   }
+
+  init = async () => {
+    try {
+      this.#offers = await this.#apiService.offers;
+    } catch (err) {
+      this.#offers = [];
+    }
+    this._notify(UpdateType.INIT);
+  };
 }
