@@ -1,12 +1,13 @@
-import { getDestinations } from '../mock/destination';
 import Observable from '../framework/observable.js';
+import { UpdateType } from '../const.js';
 
 export default class DestinationModel extends Observable {
-  #destinations;
+  #apiService = null;
+  #destinations = [];
 
-  constructor() {
+  constructor({ apiService }) {
     super();
-    this.#destinations = getDestinations();
+    this.#apiService = apiService;
   }
 
   get destinations() {
@@ -16,4 +17,13 @@ export default class DestinationModel extends Observable {
   getById(id) {
     return this.#destinations.find((destination) => destination.id === id);
   }
+
+  init = async () => {
+    try {
+      this.#destinations = await this.#apiService.destinations;
+    } catch (err) {
+      this.#destinations = [];
+    }
+    this._notify(UpdateType.INIT);
+  };
 }

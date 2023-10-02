@@ -1,13 +1,13 @@
-import { getRandomPoint } from '../mock/point';
-import { RENDER_EVENT_COUNT } from '../const';
 import Observable from '../framework/observable.js';
+import { UpdateType } from '../const.js';
 
 export default class PointModel extends Observable {
-  #points;
+  #apiService = null;
+  #points = [];
 
-  constructor() {
+  constructor({ apiService }) {
     super();
-    this.#points = Array.from({ length: RENDER_EVENT_COUNT }, getRandomPoint);
+    this.#apiService = apiService;
   }
 
   get points() {
@@ -52,5 +52,32 @@ export default class PointModel extends Observable {
     ];
 
     this._notify(updateType);
+  };
+
+  #adaptToClient = (point) => {
+    const adaptedPoint = {
+      ...point,
+      basePrice: point['base_price'],
+      dateFrom: point['date_from'] ?? new Date(point['date_from']),
+      dateTo: point['date_to'] ?? new Date(point['date_to']),
+      isFavorite: point['is_favorite'],
+    };
+
+    delete adaptedPoint['base_price'];
+    delete adaptedPoint['date_from'];
+    delete adaptedPoint['date_to'];
+    delete adaptedPoint['is_favorite'];
+
+    return adaptedPoint;
+  };
+
+  init = async () => {
+    try {
+      const points = await this.#apiService.points;
+      this.#points = points.map(this.#adaptToClient);
+    } catch (err) {
+      this.#points = [];
+    }
+    this._notify(UpdateType.INIT);
   };
 }

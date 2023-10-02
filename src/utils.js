@@ -22,6 +22,10 @@ function getRandomArrayElement(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
+function convertToTitleCase(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
+
 function formatDate(date, format) {
   return dayjs(date).format(format);
 }
@@ -59,37 +63,32 @@ const isTripPointInPast = (dateTo) =>
   dateTo && dayjs(dateTo).isBefore(dayjs());
 
 const comparePointsByDate = (firstPoint, secondPoint) => {
-  const firstDate = dayjs(firstPoint.date_from);
-  const secondDate = dayjs(secondPoint.date_from);
+  const firstDate = dayjs(firstPoint.dateFrom);
+  const secondDate = dayjs(secondPoint.dateFrom);
   const result = firstDate.isBefore(secondDate);
 
   return result ? -result : firstDate.isAfter(secondDate);
 };
 
-
-function convertToTitleCase(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-}
-
 const comparePointsByPrice = (firstPoint, secondPoint) => {
-  const firstPrice = firstPoint.base_price;
-  const secondPrice = secondPoint.base_price;
+  const firstPrice = firstPoint.basePrice;
+  const secondPrice = secondPoint.basePrice;
 
   return secondPrice - firstPrice;
 };
 
 const comparePointsByTime = (firstPoint, secondPoint) => {
-  const firstDuration = dayjs(firstPoint.date_to).diff(dayjs(firstPoint.date_from));
-  const secondDuration = dayjs(secondPoint.date_to).diff(dayjs(secondPoint.date_from));
+  const firstDuration = dayjs(firstPoint.dateTo).diff(dayjs(firstPoint.dateFrom));
+  const secondDuration = dayjs(secondPoint.dateTo).diff(dayjs(secondPoint.dateFrom));
 
   return secondDuration - firstDuration;
 };
 
 const getFilters = () => ({
   [FilterType.EVERYTHING]: (points) => points,
-  [FilterType.FUTURE]: (points) => points.filter((point) => isTripPointInFuture(point.date_from)),
-  [FilterType.PRESENT]: (points) => points.filter((point) => isTripPointInPresent(point.date_from, point.date_to)),
-  [FilterType.PAST]: (points) => points.filter((point) => isTripPointInPast(point.date_to))
+  [FilterType.FUTURE]: (points) => points.filter((point) => isTripPointInFuture(point.dateFrom)),
+  [FilterType.PRESENT]: (points) => points.filter((point) => isTripPointInPresent(point.dateFrom, point.dateTo)),
+  [FilterType.PAST]: (points) => points.filter((point) => isTripPointInPast(point.dateTo))
 });
 
 const isDateEqual = (firstDate, secondDate) =>

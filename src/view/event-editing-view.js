@@ -23,7 +23,7 @@ const createRollupButtonTemplate = (type) =>
     '';
 
 const createFormButtonsTemplate = (type) => {
-  const buttonText = type === FormType.CREATING ? 'Cansel' : 'Delete';
+  const buttonText = type === FormType.CREATING ? 'Cancel' : 'Delete';
 
   return `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
   <button class="event__reset-btn" type="reset">${buttonText}</button>
@@ -157,7 +157,7 @@ export default class EventEditingView extends AbstractStatefulView {
 
   #handleFormSubmit = null;
   #handleDeleteClick = null;
-  #handleCanselClick = null;
+  #handleCancelClick = null;
 
   #datepickers = null;
 
@@ -168,7 +168,7 @@ export default class EventEditingView extends AbstractStatefulView {
     type = FormType.EDITING,
     handleFormSubmit,
     handleDeleteClick,
-    handleCanselClick
+    handleCancelClick: handleCancelClick
   }) {
     super();
 
@@ -180,7 +180,7 @@ export default class EventEditingView extends AbstractStatefulView {
 
     this.#handleFormSubmit = handleFormSubmit;
     this.#handleDeleteClick = handleDeleteClick;
-    this.#handleCanselClick = handleCanselClick;
+    this.#handleCancelClick = handleCancelClick;
 
     this._restoreHandlers();
   }
@@ -214,12 +214,12 @@ export default class EventEditingView extends AbstractStatefulView {
 
     if (this.#type === FormType.CREATING) {
       this.element.querySelector('.event__reset-btn')
-        .addEventListener('click', this.#formCanselClickHandler);
+        .addEventListener('click', this.#formCancelClickHandler);
     } else {
       this.element.querySelector('.event__reset-btn')
         .addEventListener('click', this.#formDeleteClickHandler);
       this.element.querySelector('.event__rollup-btn')
-        .addEventListener('click', this.#formCanselClickHandler);
+        .addEventListener('click', this.#formCancelClickHandler);
     }
 
     this.#setDatepickers();
@@ -260,16 +260,16 @@ export default class EventEditingView extends AbstractStatefulView {
     this.#handleDeleteClick(EventEditingView.parseStateToPoint(this._state));
   };
 
-  #formCanselClickHandler = (evt) => {
+  #formCancelClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleCanselClick();
+    this.#handleCancelClick();
   };
 
   #typeChangeHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
-      'type': evt.target.value,
-      'offers': []
+      type: evt.target.value,
+      offers: []
     });
   };
 
@@ -278,7 +278,7 @@ export default class EventEditingView extends AbstractStatefulView {
     const destination = this.#destinationList.find((el) => el.name === evt.target.value);
     if (destination) {
       this.updateElement({
-        'destination': destination.id
+        destination: destination.id
       });
     }
   };
@@ -287,7 +287,7 @@ export default class EventEditingView extends AbstractStatefulView {
     evt.preventDefault();
     const price = parseInt(evt.target.value, 10) || 0;
     this.updateElement({
-      'base_price': price
+      basePrice: price
     });
   };
 
@@ -297,20 +297,20 @@ export default class EventEditingView extends AbstractStatefulView {
 
     if (evt.target.checked) {
       this._setState({
-        'offers': [...offers, Number(evt.target.id)]
+        offers: [...offers, evt.target.id]
       });
     } else {
       const updatedOffers = offers.filter((offer) => offer !== Number(evt.target.id));
       this._setState({
-        'offers': updatedOffers
+        offers: updatedOffers
       });
     }
   };
 
   #dateChangeHandler = ([userDate], dateStr, datepicker) => {
     const fieldName = datepicker.element.name === 'event-start-time'
-      ? 'date_from'
-      : 'date_to';
+      ? 'dateFrom'
+      : 'dateTo';
 
     this._setState({
       [fieldName]: formatDate(userDate)
