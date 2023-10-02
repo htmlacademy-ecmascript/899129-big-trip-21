@@ -1,10 +1,10 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { DATE_TIME_FORMAT } from '../const.js';
+import { DatetimeFormat } from '../const.js';
 import { formatDate } from '../utils.js';
 
 const createTripInfoMainTemplate = (points, destinations) => {
-  const startDate = formatDate(points[0].dateFrom, DATE_TIME_FORMAT.shortDate);
-  const endDate = formatDate(points[points.length - 1].dateTo, DATE_TIME_FORMAT.shortDate);
+  const startDate = formatDate(points[0].dateFrom, DatetimeFormat.SHORT_DATE);
+  const endDate = formatDate(points[points.length - 1].dateTo, DatetimeFormat.SHORT_DATE);
 
   let destinationNames = points.map((point) => destinations.find((el) => point.destination === el.id).name);
   destinationNames = destinationNames.filter((el, i, array) => array[i] !== array[i + 1]);
