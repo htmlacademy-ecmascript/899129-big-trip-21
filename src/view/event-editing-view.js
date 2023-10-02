@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { DATE_TIME_FORMAT, POINT_TYPES, FormType, EMPTY_POINT } from '../const.js';
+import { DatetimeFormat, POINT_TYPES, FormType, EMPTY_POINT } from '../const.js';
 import { convertToTitleCase, formatDate } from '../utils.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
@@ -41,8 +41,8 @@ const createFormButtonsTemplate = (type, point) => {
 const createFormHeaderTemplate = (point, destinationList, destination, formType) => {
   const { basePrice, dateFrom, dateTo, type, isDisabled } = point;
 
-  const startDatetime = dateFrom ? formatDate(dateFrom, DATE_TIME_FORMAT.FORM_DATETIME) : '';
-  const endDatetime = dateTo ? formatDate(dateTo, DATE_TIME_FORMAT.FORM_DATETIME) : '';
+  const startDatetime = dateFrom ? formatDate(dateFrom, DatetimeFormat.FORM_DATETIME) : '';
+  const endDatetime = dateTo ? formatDate(dateTo, DatetimeFormat.FORM_DATETIME) : '';
 
   const typeName = type ? type : POINT_TYPES[0];
 
@@ -246,7 +246,7 @@ export default class EventEditingView extends AbstractStatefulView {
       return flatpickr(
         element,
         {
-          dateFormat: DATE_TIME_FORMAT.PICKER_DATETIME,
+          dateFormat: DatetimeFormat.PICKER_DATETIME,
           defaultDate,
           enableTime: true,
           minDate,

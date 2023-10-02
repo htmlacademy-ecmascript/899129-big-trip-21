@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { DATE_TIME_FORMAT } from '../const.js';
+import { DatetimeFormat } from '../const.js';
 import { formatDate, getPointDuration } from '../utils.js';
 import he from 'he';
 
@@ -16,14 +16,14 @@ const createOffersListTemplate = (pointOffers, offers) =>
 const createTripPointTemplate = (point, offersList, destination) => {
   const { basePrice, dateFrom, dateTo, isFavorite, type, offers } = point;
 
-  const shortDate = formatDate(dateFrom, DATE_TIME_FORMAT.shortDate);
+  const shortDate = formatDate(dateFrom, DatetimeFormat.SHORT_DATE);
 
-  const startDatetime = formatDate(dateFrom, DATE_TIME_FORMAT.dateTime);
-  const startDate = formatDate(dateFrom, DATE_TIME_FORMAT.date);
-  const startTime = formatDate(dateFrom, DATE_TIME_FORMAT.time);
+  const startDatetime = formatDate(dateFrom, DatetimeFormat.DATETIME);
+  const startDate = formatDate(dateFrom, DatetimeFormat.DATE);
+  const startTime = formatDate(dateFrom, DatetimeFormat.TIME);
 
-  const endDatetime = formatDate(dateTo, DATE_TIME_FORMAT.date);
-  const endTime = formatDate(dateTo, DATE_TIME_FORMAT.time);
+  const endDatetime = formatDate(dateTo, DatetimeFormat.DATE);
+  const endTime = formatDate(dateTo, DatetimeFormat.TIME);
 
   const duration = getPointDuration(dateFrom, dateTo);
 

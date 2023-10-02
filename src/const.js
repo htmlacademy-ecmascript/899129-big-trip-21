@@ -10,12 +10,12 @@ const POINT_TYPES = [
   'restaurant'
 ];
 
-const DATE_TIME_FORMAT = {
-  dateTime: 'YYYY-MM-DDTHH:mm',
-  date: 'YYYY-MM-DD',
-  time: 'HH:mm',
-  shortDate: 'MMM DD',
-  formDateTime: 'DD/MM/YY HH:mm',
+const DatetimeFormat = {
+  DATETIME: 'YYYY-MM-DDTHH:mm',
+  DATE: 'YYYY-MM-DD',
+  TIME: 'HH:mm',
+  SHORT_DATE: 'MMM DD',
+  FORM_DATETIME: 'DD/MM/YY HH:mm',
   PICKER_DATETIME: 'd/m/y H:i'
 };
 
@@ -94,7 +94,8 @@ const HTTPMethod = {
 };
 
 export {
-  POINT_TYPES, DATE_TIME_FORMAT,
+  POINT_TYPES,
+  DatetimeFormat,
   FilterType,
   FilterText,
   PointMode,
