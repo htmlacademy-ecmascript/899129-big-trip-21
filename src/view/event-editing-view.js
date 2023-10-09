@@ -68,7 +68,7 @@ const createFormHeaderTemplate = (point, destinationList, destination, formType)
       <label class="event__label  event__type-output" for="event-destination-1">
         ${typeName}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destinationName)}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
       <datalist id="destination-list-1">
         ${createDestinationOptionsTemplate(destinationList)}
       </datalist>
@@ -103,7 +103,7 @@ const createOffersTemplate = (pointOffers, offersList, point) => {
       `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="${offer.id}" type="checkbox" name="event-offer-comfort" ${offerChecked ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
         <label class="event__offer-label" for="${offer.id}">
-          <span class="event__offer-title">${offer.title}</span>
+          <span class="event__offer-title">${he.encode(offer.title)}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
         </label>
@@ -129,7 +129,7 @@ const createFormDestinationTemplate = (destination) => {
 
   return `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-    <p class="event__destination-description">${description}</p>
+    <p class="event__destination-description">${he.encode(description)}</p>
 
     <div class="event__photos-container">
       <div class="event__photos-tape">
